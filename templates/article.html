@@ -1,0 +1,5 @@
+{% extends 'base.html' %}{% block content %}
+<article class="detail"><h1>{{ n.title }}</h1><p class="muted">By {{ setting('site_name') }} Team · {{ n.published_at|ago }}{% if n.cat_slug %} · <a href="/news/category/{{ n.cat_slug }}/">{{ n.cat_name }}</a>{% endif %}</p>
+{% if n.featured_image %}<img class="featured" src="{{ img(n.featured_image) }}" alt="{{ n.title }}">{% endif %}
+<div class="prose">{{ n.content|nl2br }}</div>
+{% if rel %}<section><h2>Related articles</h2><ul>{% for r in rel %}<li><a href="/news/{{ r.slug }}.html">{{ r.title }}</a></li>{% endfor %}</ul></section>{% endif %}</article>{% endblock %}

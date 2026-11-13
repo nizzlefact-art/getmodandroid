@@ -1,0 +1,9 @@
+{% extends 'base.html' %}{% from '_macros.html' import grid %}
+{% block content %}
+<h1>{{ h1 }}</h1>
+<div class="chips"><a href="{{ '/games/' if type_=='game' else '/apps/' }}">All</a>{% for c in cats %}<a href="/category/{{ c.slug }}/">{{ c.name }}</a>{% endfor %}</div>
+<div class="sortbar">Sort: {% for k,l in [('latest','Latest'),('updated','Updated'),('trending','Trending'),('popular','Popular')] %}<a href="{{ base }}?sort={{ k }}">{{ l }}</a>{% endfor %}</div>
+<div id="list">{{ grid(items) }}</div>
+{{ pager }}
+{% if has_more %}<div class="center"><button class="btn" id="loadMore" data-type="{{ type_ }}" data-cat="{{ cat.id if cat else 0 }}" data-sort="{{ sort }}" data-page="{{ page + 1 }}">Load more</button></div>{% endif %}
+{% endblock %}

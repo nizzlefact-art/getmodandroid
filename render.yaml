@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: getmodandroid
+    runtime: python
+    plan: starter            # persistent disk needs a paid plan
+    buildCommand: pip install -r requirements.txt
+    startCommand: python run.py
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.3
+      - key: DATA_DIR
+        value: /var/data
+    disk:
+      name: data
+      mountPath: /var/data
+      sizeGB: 5

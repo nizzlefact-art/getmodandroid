@@ -1,0 +1,6 @@
+{% extends 'base.html' %}{% block content %}
+<h1>{{ cat.name if cat else 'News & Articles' }}</h1>
+<div class="chips"><a href="/news/">All</a>{% for c in cats %}<a href="/news/category/{{ c.slug }}/">{{ c.name }}</a>{% endfor %}</div>
+{% if not items %}<p class="muted">No articles yet.</p>{% else %}<div class="grid news-grid">
+{% for n in items %}<a class="card news-card" href="/news/{{ n.slug }}.html">{% if n.featured_image %}<img loading="lazy" src="{{ img(n.featured_image) }}" alt="{{ n.title }}">{% endif %}<div class="meta">{% if n.is_featured %}<span class="badge">Featured</span> {% endif %}<h3>{{ n.title }}</h3><p>{{ n.excerpt }}</p><small class="muted">{{ n.published_at|ago }}</small></div></a>{% endfor %}</div>{{ pager }}{% endif %}
+{% endblock %}

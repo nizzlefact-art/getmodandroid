@@ -1,0 +1,11 @@
+{% extends 'admin/base.html' %}{% block title %}{{ 'Edit' if a.id else 'New' }} article{% endblock %}{% block body %}
+<form method="post" action="{{ url_for('admin.article_save') }}" enctype="multipart/form-data" class="form" style="max-width:none"><input type="hidden" name="csrf" value="{{ csrf() }}"><input type="hidden" name="id" value="{{ a.id or 0 }}">
+<div class="fgrid"><div class="full"><label>Title *</label><input name="title" required value="{{ a.title or '' }}"></div><div><label>Slug</label><input name="slug" value="{{ a.slug or '' }}"></div>
+<div><label>Category</label><select name="category_id"><option value="">—</option>{% for c in cats %}<option value="{{ c.id }}" {{ 'selected' if c.id==a.category_id }}>{{ c.name }}</option>{% endfor %}</select></div>
+<div class="full"><label>Excerpt</label><input name="excerpt" maxlength="300" value="{{ a.excerpt or '' }}"></div><div class="full"><label>Content</label><textarea name="content" rows="14">{{ a.content or '' }}</textarea></div>
+<div><label>Featured image</label><input type="file" name="image" accept="image/*"></div><div><label>Publish date/time (blank = now)</label><input type="datetime-local" name="published_at" value="{{ pub }}"></div>
+<div><label>Status</label><select name="status"><option value="draft">Draft</option><option value="published" {{ 'selected' if a.status=='published' }}>Published</option></select></div>
+<div><label><input type="checkbox" name="is_featured" {{ 'checked' if a.is_featured }}> Featured</label><label><input type="checkbox" name="noindex" {{ 'checked' if a.noindex }}> noindex</label></div>
+<div><label>Meta title</label><input name="meta_title" value="{{ a.meta_title or '' }}"></div><div><label>Canonical URL</label><input name="canonical_url" value="{{ a.canonical_url or '' }}"></div>
+<div class="full"><label>Meta description</label><input name="meta_description" value="{{ a.meta_description or '' }}"></div><div class="full"><label>Meta keywords</label><input name="meta_keywords" value="{{ a.meta_keywords or '' }}"></div></div>
+<div><button class="btn">Save</button> <a href="{{ url_for('admin.articles') }}">Back</a></div></form>{% endblock %}

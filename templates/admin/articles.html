@@ -1,0 +1,5 @@
+{% extends 'admin/base.html' %}{% block title %}News & Articles{% endblock %}{% block body %}
+<p><a class="btn" href="{{ url_for('admin.article_form') }}">+ New article</a></p>
+<form method="post" class="form" style="grid-template-columns:1fr auto;max-width:420px"><input type="hidden" name="csrf" value="{{ csrf() }}"><input type="hidden" name="action" value="add_cat"><input name="name" placeholder="New article category"><button class="btn">Add</button></form>
+<div class="tablewrap"><table><tr><th>Title</th><th>Status</th><th>Published</th><th></th></tr>{% for a in rows %}<tr><td>{{ a.title }}</td><td>{{ a.status }}</td><td>{{ a.published_at or '—' }}</td>
+<td><a href="{{ url_for('admin.article_form',nid=a.id) }}">Edit</a> <form method="post" class="inline" onsubmit="return confirm('Delete article?')"><input type="hidden" name="csrf" value="{{ csrf() }}"><input type="hidden" name="action" value="delete"><input type="hidden" name="id" value="{{ a.id }}"><button class="btn danger" style="padding:3px 10px">Delete</button></form></td></tr>{% endfor %}</table></div>{% endblock %}

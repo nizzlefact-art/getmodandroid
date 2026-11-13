@@ -1,0 +1,28 @@
+{% extends 'base.html' %}{% from '_macros.html' import grid %}
+{% block content %}
+<article class="detail" data-slug="{{ a.slug }}" data-name="{{ a.name }}" data-icon="{{ img(a.icon) }}" data-url="{{ item_url(a) }}" data-version="{{ latest.version if latest else '' }}">
+<header class="d-head"><img src="{{ img(a.icon) }}" width="96" height="96" alt="{{ a.name }} icon"><div>
+ <h1>{{ a.name }}{% if latest %} <small>v{{ latest.version }}</small>{% endif %}</h1>
+ <div class="muted">{% if a.developer %}{{ a.developer }} · {% endif %}{% if a.cat_slug %}<a href="/category/{{ a.cat_slug }}/">{{ a.cat_name }}</a>{% else %}Uncategorized{% endif %}</div>
+ <div class="stats"><span>★ {{ a.rating if a.rating else 'No ratings yet' }}</span><span>⬇ {{ a.downloads|num }} downloads</span></div>
+ {% if latest %}<a class="btn big" rel="nofollow" href="/download/{{ latest.id }}/">Download APK ({{ latest.file_size|size }})</a>{% else %}<span class="muted">No download available yet.</span>{% endif %}</div></header>
+<table class="info"><tbody><tr><th>Version</th><td>{{ latest.version if latest else '—' }}</td><th>File size</th><td>{{ (latest.file_size if latest else 0)|size }}</td></tr>
+<tr><th>Android</th><td>{{ latest.min_android if latest else a.min_android }}+</td><th>Updated</th><td>{{ (latest.release_date if latest else a.updated_at)|ago }}</td></tr>
+{% if a.package_name %}<tr><th>Package</th><td colspan="3">{{ a.package_name }}</td></tr>{% endif %}</tbody></table>
+{% if shots %}<section><h2>Screenshots</h2><div class="shots">{% for s in shots %}<a href="{{ img(s.file) }}" target="_blank"><img loading="lazy" src="{{ img(s.file) }}" alt="{{ a.name }} screenshot"></a>{% endfor %}</div></section>{% endif %}
+<section><h2>About {{ a.name }}</h2><div class="prose">{{ a.description|nl2br }}</div></section>
+{% if a.features and a.features.strip() %}<section><h2>Features</h2><ul class="prose">{% for f in a.features.splitlines() if f.strip() %}<li>{{ f.strip() }}</li>{% endfor %}</ul></section>{% endif %}
+{% if latest and latest.whats_new and latest.whats_new.strip() %}<section><h2>What's New</h2><div class="prose">{{ latest.whats_new|nl2br }}</div></section>{% endif %}
+<section><h2>How to install</h2><div class="prose">{% if a.install_guide and a.install_guide.strip() %}{{ a.install_guide|nl2br }}{% else %}<ol><li>Download the APK file.</li><li>Open it from your notifications or Files app.</li><li>If asked, allow “Install unknown apps” for your browser or file manager.</li><li>Tap Install and open the app.</li></ol>{% endif %}</div></section>
+{% if versions %}<section><h2>Version history</h2><div class="tablewrap"><table class="vtable"><thead><tr><th>Version</th><th>Date</th><th>Size</th><th>Android</th><th>Downloads</th><th></th></tr></thead><tbody>
+{% for v in versions %}<tr><td>{{ v.version }}{% if v.is_latest %} <span class="badge">Latest</span>{% endif %}</td><td>{{ v.release_date|ago }}</td><td>{{ v.file_size|size }}</td><td>{{ v.min_android }}+</td><td>{{ v.download_count|num }}</td><td><a rel="nofollow" href="/download/{{ v.id }}/">Download</a></td></tr>{% endfor %}</tbody></table></div></section>{% endif %}
+<section id="reviews"><h2>Reviews</h2>
+{% for r in reviews %}<div class="review"><strong>{{ r.name }}</strong> <span class="stars">{{ '★' * r.rating }}{{ '☆' * (5 - r.rating) }}</span> <small class="muted">{{ r.created_at|ago }}</small><p>{{ r.comment|nl2br }}</p></div>{% else %}<p class="muted">No reviews yet. Be the first.</p>{% endfor %}
+<form id="reviewForm" class="form"><input type="hidden" name="app_id" value="{{ a.id }}"><input type="hidden" name="csrf" value="{{ csrf() }}"><input type="text" name="website" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+<input name="name" placeholder="Your name" required maxlength="80"><select name="rating" required><option value="">Rating</option>{% for i in [5,4,3,2,1] %}<option value="{{ i }}">{{ '★' * i }}</option>{% endfor %}</select>
+<textarea name="comment" placeholder="Write your review" required minlength="5" maxlength="1500" rows="3"></textarea><button class="btn">Submit review</button><span id="reviewMsg" class="muted"></span></form></section>
+{% set su = abs_url(item_url(a))|urlencode %}{% set st = a.name|urlencode %}
+<section class="share"><strong>Share:</strong><a rel="noopener nofollow" target="_blank" href="https://twitter.com/intent/tweet?url={{ su }}&text={{ st }}">X</a><a rel="noopener nofollow" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u={{ su }}">Facebook</a><a rel="noopener nofollow" target="_blank" href="https://wa.me/?text={{ st }}%20{{ su }}">WhatsApp</a><a rel="noopener nofollow" target="_blank" href="https://t.me/share/url?url={{ su }}&text={{ st }}">Telegram</a></section>
+{% if latest %}<a class="dl-sticky btn big" rel="nofollow" href="/download/{{ latest.id }}/">Download APK · {{ latest.file_size|size }}</a>{% endif %}
+{% if related %}<section><h2>Related {{ label|lower }}</h2>{{ grid(related) }}</section>{% endif %}
+</article>{% endblock %}

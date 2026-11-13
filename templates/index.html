@@ -1,0 +1,18 @@
+{% extends 'base.html' %}{% from '_macros.html' import grid, carousel %}
+{% block content %}
+<section class="hero">
+  <div class="hero-text">
+    <p class="kicker">Android apps &amp; games</p>
+    <h1>Find the app, check the file, then install.</h1>
+    <p>{{ setting('site_description') }}</p>
+    <form action="/search" method="get" class="hero-search"><input type="search" name="q" placeholder="Search apps &amp; games" minlength="2" required><button>Search</button></form>
+    <p class="hero-links"><a href="/apps/">Browse apps</a><a href="/games/">Browse games</a>{% if setting('telegram') %}<a href="{{ setting('telegram') }}" target="_blank" rel="noopener nofollow">Get updates on Telegram</a>{% endif %}</p>
+  </div>
+</section>
+<section id="recent-wrap" hidden><div class="sec-head"><h2>Recently Viewed</h2></div><div class="grid" id="recent"></div></section>
+{% for title, lst, more, kind in sections %}{% if lst %}<section><div class="sec-head"><h2>{{ title }}</h2>{% if more %}<a class="more" href="{{ more }}">More</a>{% endif %}</div>{% if kind=='carousel' %}{{ carousel(lst) }}{% else %}{{ grid(lst) }}{% endif %}</section>{% endif %}{% endfor %}
+{% if pop %}<section><div class="sec-head"><h2>Popular Categories</h2></div><div class="chips">{% for c in pop %}<a href="/category/{{ c.slug }}/">{{ c.name }} <small>{{ c.n }}</small></a>{% endfor %}</div></section>{% endif %}
+{% if setting('telegram') %}<section class="tg-strip"><div><strong>New uploads land on Telegram first.</strong><br><span class="muted">Join the channel to hear about new apps, games and updates.</span></div><a class="btn" href="{{ setting('telegram') }}" target="_blank" rel="noopener nofollow">Join the channel</a></section>{% endif %}
+{% if news %}<section><div class="sec-head"><h2>Latest News</h2><a href="/news/">All news →</a></div><div class="grid news-grid">
+{% for n in news %}<a class="card news-card" href="/news/{{ n.slug }}.html">{% if n.featured_image %}<img loading="lazy" src="{{ img(n.featured_image) }}" alt="{{ n.title }}">{% endif %}<div class="meta"><h3>{{ n.title }}</h3><p>{{ n.excerpt }}</p><small class="muted">{{ n.published_at|ago }}</small></div></a>{% endfor %}</div></section>{% endif %}
+{% endblock %}

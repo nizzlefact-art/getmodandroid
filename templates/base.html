@@ -1,0 +1,67 @@
+{% set site = setting('site_name','GetModAndroid') %}
+{% set s = seo or {} %}
+{% set title = s.get('title') or setting('default_meta_title', site) %}
+{% set desc = s.get('description') or setting('default_meta_description') %}
+{% set canon = s.get('canonical') or request.base_url %}
+{% set og = s.get('og_image') or (abs_url('/uploads/' ~ setting('default_og_image')) if setting('default_og_image') else abs_url('/static/images/og.jpg')) %}
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ title }}</title>
+<meta name="description" content="{{ desc }}">
+{% if s.get('keywords') %}<meta name="keywords" content="{{ s.keywords }}">{% endif %}
+<meta name="robots" content="{{ 'noindex,follow' if s.get('noindex') else 'index,follow' }}">
+<link rel="canonical" href="{{ canon }}">
+{% if s.get('prev') %}<link rel="prev" href="{{ s.prev }}">{% endif %}{% if s.get('next') %}<link rel="next" href="{{ s.next }}">{% endif %}
+<meta property="og:site_name" content="{{ site }}"><meta property="og:type" content="{{ s.get('og_type','website') }}"><meta property="og:title" content="{{ title }}"><meta property="og:description" content="{{ desc }}"><meta property="og:url" content="{{ canon }}">
+{% if og %}<meta property="og:image" content="{{ og }}"><meta name="twitter:image" content="{{ og }}">{% endif %}
+<meta name="twitter:card" content="{{ 'summary_large_image' if og else 'summary' }}"><meta name="twitter:title" content="{{ title }}"><meta name="twitter:description" content="{{ desc }}">
+<link rel="icon" type="image/png" href="{{ '/uploads/' ~ setting('favicon') if setting('favicon') else '/static/images/favicon.png' }}"><link rel="apple-touch-icon" href="/static/images/logo-96.png"><meta name="theme-color" content="#0f2a5c">
+<link rel="stylesheet" href="/static/css/style.css">
+<script>try{var t=localStorage.getItem('theme');if(!t)t=matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';document.documentElement.dataset.theme=t}catch(e){}</script>
+{% for sc in s.get('schema', []) %}<script type="application/ld+json">{{ sc|tojson }}</script>{% endfor %}
+{% if setting('ga_id') %}<script async src="https://www.googletagmanager.com/gtag/js?id={{ setting('ga_id') }}"></script><script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config',{{ setting('ga_id')|tojson }});</script>{% endif %}
+</head><body>
+<header class="site-header"><div class="wrap bar">
+ <button class="menu-btn" id="menuBtn" aria-label="Open menu"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+ <a class="brand" href="/"><img src="{{ '/uploads/' ~ setting('logo') if setting('logo') else '/static/images/logo-96.png' }}" alt="" width="38" height="38"><span>{{ site }}</span></a>
+ 
+ <nav class="main-nav"><a href="/">Home</a><a href="/apps/">Apps</a><a href="/games/">Games</a><a href="/news/">News</a>
+  <div class="dd"><a href="#" onclick="return false">Categories ▾</a><div class="dd-menu">{% for c in all_cats %}<a href="/category/{{ c.slug }}/">{{ c.name }}</a>{% endfor %}</div></div></nav>
+ <div class="tools">{% if setting('telegram') %}<a class="tg-btn" href="{{ setting('telegram') }}" target="_blank" rel="noopener nofollow">Telegram</a>{% endif %}<button id="searchBtn" aria-label="Search"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></button><button id="themeBtn" class="theme-btn" data-theme-toggle aria-label="Toggle theme"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></button></div></div>
+ <div class="searchbar" id="searchbar"><div class="wrap"><form action="/search" method="get" autocomplete="off"><input type="search" name="q" id="q" placeholder="Search apps, games, developers…" minlength="2" required><button>Search</button></form><div id="suggest" class="suggest"></div></div></div>
+</header>
+<div class="drawer-overlay" id="drawerOverlay"></div>
+<aside class="drawer" id="drawer" aria-label="Menu">
+ <div class="drawer-head"><img src="{{ '/uploads/' ~ setting('logo') if setting('logo') else '/static/images/logo-96.png' }}" alt="" width="40" height="40"><strong>{{ site }}</strong></div>
+ {% set path = request.path %}
+ <nav>
+  <a href="/" class="{{ 'on' if path=='/' }}">Home</a><a href="/apps/" class="{{ 'on' if path.startswith('/apps') }}">Apps</a><a href="/games/" class="{{ 'on' if path.startswith('/games') }}">Games</a>
+  <a href="/news/" class="{{ 'on' if path.startswith('/news') }}">News</a><a href="/browse/" class="{{ 'on' if path.startswith('/browse') or path.startswith('/category') }}">Browse categories</a>
+  {% if setting('telegram') %}<a href="{{ setting('telegram') }}" target="_blank" rel="noopener nofollow">Telegram channel</a>{% endif %}
+  <a href="/page/about-us.html">About Us</a><a href="/page/contact-us.html">Contact Us</a><a href="/page/dmca.html">DMCA / Copyright</a>
+  <button type="button" class="drawer-theme" data-theme-toggle>Dark / light mode</button>
+ </nav>
+</aside>
+<main class="wrap">
+{% if s.get('crumbs') %}<nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a>{% for l,u in s.crumbs %} › {% if u %}<a href="{{ u }}">{{ l }}</a>{% else %}<span>{{ l }}</span>{% endif %}{% endfor %}</nav>{% endif %}
+{% block content %}{% endblock %}
+</main>
+<footer class="site-footer"><div class="wrap"><div class="fcols">
+ <div><strong>{{ site }}</strong><p class="muted">{{ setting('footer_text') }}</p></div>
+ <div><strong>Explore</strong><a href="/apps/">Apps</a><a href="/games/">Games</a><a href="/news/">News</a></div>
+ <div><strong>Legal</strong><a href="/page/privacy-policy.html">Privacy Policy</a><a href="/page/terms-and-conditions.html">Terms</a><a href="/page/dmca.html">DMCA / Copyright</a></div>
+ <div><strong>Company</strong><a href="/page/about-us.html">About Us</a><a href="/page/contact-us.html">Contact Us</a>{% for k in ['facebook','twitter','telegram'] %}{% if setting(k) %}<a rel="noopener nofollow" target="_blank" href="{{ setting(k) }}">{{ k|capitalize }}</a>{% endif %}{% endfor %}</div>
+</div><p class="copy">© {{ now_year }} {{ site }}. All trademarks belong to their owners.</p></div></footer>
+{% if setting('telegram') %}<a class="tg-float" href="{{ setting('telegram') }}" target="_blank" rel="noopener nofollow" aria-label="Join our Telegram channel"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M22 3 2 11l6 2.5L19 6l-8.5 8.5V20l3.5-3.5L18 19z"/></svg>Join Telegram</a>{% endif %}
+{% if setting('ad_code') %}<div class="wrap ad">{{ setting('ad_code')|safe }}</div>{% endif %}
+{% set path = request.path %}
+<nav class="tabbar" aria-label="Main">
+ <a href="/" class="{{ 'on' if path=='/' }}"><svg viewBox="0 0 24 24"><path d="M3 11 12 3l9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Home</a>
+ <a href="/apps/" class="{{ 'on' if path.startswith('/apps') or path.startswith('/app/') }}"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg>Apps</a>
+ <a href="/games/" class="{{ 'on' if path.startswith('/games') or path.startswith('/game/') }}"><svg viewBox="0 0 24 24"><path d="M7 8h10a5 5 0 0 1 5 5v1a3 3 0 0 1-5.4 1.8L15 14H9l-1.600 1.800A3 3 0 0 1 2 14v-1a5 5 0 0 1 5-5z"/><path d="M8 10.500v3M6.500 12h3"/></svg>Games</a>
+ <a href="/news/" class="{{ 'on' if path.startswith('/news') }}"><svg viewBox="0 0 24 24"><path d="M5 4h11a2 2 0 0 1 2 2v14H7a2 2 0 0 1-2-2zM18 8h2a1 1 0 0 1 1 1v9a2 2 0 0 1-2 2M8 8h7M8 12h7M8 16h4"/></svg>News</a>
+ <a href="/browse/" class="{{ 'on' if path.startswith('/browse') or path.startswith('/category') }}"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg>Browse</a>
+</nav>
+<script>window.PN={base:"",csrf:{{ csrf()|tojson }}};</script>
+<script src="/static/js/app.js" defer></script>
+</body></html>

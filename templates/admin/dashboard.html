@@ -1,0 +1,5 @@
+{% extends 'admin/base.html' %}{% block title %}Dashboard{% endblock %}{% block body %}
+<div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(170px,1fr))">{% for k,v in st.items() %}<div class="stat"><b>{{ v }}</b>{{ k }}</div>{% endfor %}</div>
+<h2>Recent uploads</h2><div class="tablewrap"><table><tr><th>Name</th><th>Type</th><th>Status</th><th>Added</th><th></th></tr>
+{% for a in recent %}<tr><td>{{ a.name }}</td><td>{{ a.type }}</td><td>{{ a.status }}</td><td>{{ a.created_at }}</td><td><a href="{{ url_for('admin.item_form',type_=a.type,aid=a.id) }}">Edit</a></td></tr>{% endfor %}</table></div>
+<p><a class="btn" href="{{ url_for('admin.item_form',type_='app') }}">+ Add app</a> <a class="btn" href="{{ url_for('admin.item_form',type_='game') }}">+ Add game</a></p>{% endblock %}

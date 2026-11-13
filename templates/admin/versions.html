@@ -1,0 +1,12 @@
+{% extends 'admin/base.html' %}{% block title %}Versions: {{ a.name }}{% endblock %}{% block body %}
+<p><a href="{{ url_for('admin.item_form',type_=a.type,aid=a.id) }}">← Back to {{ a.name }}</a></p>
+<p class="notice">Sirf wahi files upload karo jinka tumhare paas distribute karne ka haq/permission hai. Max {{ MAX_APK_MB }} MB.</p>
+<form method="post" action="{{ url_for('admin.version_save',aid=a.id) }}" enctype="multipart/form-data" class="form" style="max-width:none"><input type="hidden" name="csrf" value="{{ csrf() }}"><input type="hidden" name="vid" value="{{ e.id or 0 }}">
+<div class="fgrid"><div><label>Version *</label><input name="version" required value="{{ e.version or '' }}"></div><div><label>Release date</label><input type="date" name="release_date" value="{{ e.release_date or today }}"></div>
+<div><label>APK file {{ '(leave empty to keep current)' if e.apk_file }}</label><input type="file" name="apk" accept=".apk"></div><div><label>Min Android</label><input name="min_android" value="{{ e.min_android or '5.0' }}"></div>
+<div><label>OR external https URL</label><input name="external_url" value="{{ e.external_url or '' }}"></div><div><label>File size MB (only for external URL)</label><input name="size_mb" type="number" step="0.01" value="{{ ((e.file_size or 0)/1048576)|round(2) if e.id else '' }}"></div>
+<div class="full"><label>What's new</label><textarea name="whats_new" rows="4">{{ e.whats_new or '' }}</textarea></div><div><label><input type="checkbox" name="is_latest" {{ 'checked' if e.is_latest }}> Mark as latest</label></div></div>
+<div><button class="btn">{{ 'Update' if e.id else 'Add' }} version</button> {% if e.id %}<a href="{{ url_for('admin.versions',aid=a.id) }}">Cancel</a>{% endif %}</div></form>
+<div class="tablewrap"><table><tr><th>Version</th><th>Date</th><th>Size</th><th>Min Android</th><th>Downloads</th><th>File</th><th></th></tr>
+{% for r in rows %}<tr><td>{{ r.version }}{% if r.is_latest %} <span class="badge">Latest</span>{% endif %}</td><td>{{ r.release_date }}</td><td>{{ r.file_size|size }}</td><td>{{ r.min_android }}</td><td>{{ r.download_count }}</td><td>{{ 'Uploaded' if r.apk_file else 'External' }}</td>
+<td><a href="{{ url_for('admin.versions',aid=a.id,edit=r.id) }}">Edit</a> {{ del(url_for('admin.version_delete',aid=a.id,vid=r.id),'Delete','Delete this version and its file?') }}</td></tr>{% endfor %}</table></div>{% endblock %}

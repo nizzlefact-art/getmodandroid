@@ -1,0 +1,10 @@
+{% macro card(a) %}
+<a class="card app-card" href="{{ item_url(a) }}"><img loading="lazy" width="64" height="64" src="{{ img(a.icon) }}" alt="{{ a.name }} icon">
+<div class="meta"><h3>{{ a.name }}</h3><div class="dev">{{ a.developer }}</div>
+<div class="tags"><span>{{ a.cat_name or 'Uncategorized' }}</span>{% if a.version %}<span>v{{ a.version }}</span>{% endif %}</div>
+<p>{{ a.short_description }}</p>
+<div class="stats"><span class="rate">{{ a.rating if a.rating else 'New' }} <i class="star">★</i></span><span class="dls">⬇ {{ a.downloads|num }}</span></div></div></a>
+{% endmacro %}
+{% macro grid(list) %}{% if list %}<div class="grid">{% for a in list %}{{ card(a) }}{% endfor %}</div>{% else %}<p class="muted">Nothing here yet.</p>{% endif %}{% endmacro %}
+{% macro banner(a) %}<a class="banner" href="{{ item_url(a) }}"{% if a.shot %} style="background-image:url('{{ img(a.shot) }}')"{% endif %}><span class="b-info"><img src="{{ img(a.icon) }}" width="46" height="46" alt=""><span><strong>{{ a.name }}</strong><small>{{ a.cat_name or 'Android' }}</small></span></span></a>{% endmacro %}
+{% macro carousel(list) %}<div class="carousel">{% for a in list %}{{ banner(a) }}{% endfor %}</div>{% endmacro %}

@@ -1,0 +1,5 @@
+{% extends 'base.html' %}{% block content %}
+<h1>Browse</h1>
+<h2>App categories</h2><div class="cat-grid">{% for c in app_cats %}<a href="/category/{{ c.slug }}/"><strong>{{ c.name }}</strong><small>{{ c.n }} apps</small></a>{% endfor %}</div>
+<h2>Game categories</h2><div class="cat-grid">{% for c in game_cats %}<a href="/category/{{ c.slug }}/"><strong>{{ c.name }}</strong><small>{{ c.n }} games</small></a>{% endfor %}</div>
+{% endblock %}

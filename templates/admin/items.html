@@ -1,0 +1,6 @@
+{% extends 'admin/base.html' %}{% block title %}{{ 'Games' if type_=='game' else 'Apps' }}{% endblock %}{% block body %}
+<p><a class="btn" href="{{ url_for('admin.item_form',type_=type_) }}">+ Add {{ type_ }}</a></p>
+<form method="get"><input name="s" placeholder="Search by name" value="{{ s }}" style="max-width:300px"></form>
+<div class="tablewrap"><table><tr><th>Name</th><th>Category</th><th>Version</th><th>Downloads</th><th>Status</th><th></th></tr>
+{% for a in rows %}<tr><td>{{ a.name }}</td><td>{{ a.cat or '—' }}</td><td>{{ a.ver or '—' }}</td><td>{{ a.dl }}</td><td>{{ a.status }}</td>
+<td><a href="{{ url_for('admin.item_form',type_=type_,aid=a.id) }}">Edit</a> · <a href="{{ url_for('admin.versions',aid=a.id) }}">Versions</a> · {{ del(url_for('admin.item_delete',type_=type_,aid=a.id),'Delete','Delete this and all its files?') }}</td></tr>{% endfor %}</table></div>{% endblock %}

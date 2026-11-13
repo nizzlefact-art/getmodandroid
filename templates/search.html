@@ -1,0 +1,7 @@
+{% extends 'base.html' %}{% from '_macros.html' import grid %}
+{% block content %}
+<h1>Search{% if qs %}: {{ qs }}{% endif %}</h1>
+{% if qs|length < 2 %}<p class="muted">Type at least 2 characters to search.</p>
+{% elif not items %}<div class="empty"><h2>No results found</h2><p class="muted">Nothing matched “{{ qs }}”. Try a shorter keyword or browse <a href="/apps/">Apps</a> or <a href="/games/">Games</a>.</p></div>
+{% else %}<p class="muted">{{ total }} result{{ '' if total==1 else 's' }}</p>{{ grid(items) }}{{ pager }}{% endif %}
+{% endblock %}

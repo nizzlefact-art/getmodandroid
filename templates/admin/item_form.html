@@ -1,0 +1,22 @@
+{% extends 'admin/base.html' %}{% block title %}{{ 'Edit' if a.id else 'Add' }} {{ type_ }}{% endblock %}{% block body %}
+<form method="post" action="{{ url_for('admin.item_save',type_=type_) }}" enctype="multipart/form-data" class="form" style="max-width:none"><input type="hidden" name="csrf" value="{{ csrf() }}"><input type="hidden" name="id" value="{{ a.id or 0 }}">
+<div class="fgrid">
+<div><label>Name *</label><input name="name" required value="{{ a.name or '' }}"></div><div><label>Slug (custom URL, optional)</label><input name="slug" value="{{ a.slug or '' }}"></div>
+<div><label>Developer</label><input name="developer" value="{{ a.developer or '' }}"></div><div><label>Package name</label><input name="package_name" value="{{ a.package_name or '' }}" placeholder="com.example.app"></div>
+<div><label>Category</label><select name="category_id"><option value="">—</option>{% for c in cats %}<option value="{{ c.id }}" {{ 'selected' if c.id==a.category_id }}>{{ c.name }}</option>{% endfor %}</select></div>
+<div><label>Min Android</label><input name="min_android" value="{{ a.min_android or '5.0' }}"></div>
+<div class="full"><label>Short description</label><input name="short_description" maxlength="300" value="{{ a.short_description or '' }}"></div>
+<div class="full"><label>Description</label><textarea name="description" rows="7">{{ a.description or '' }}</textarea></div>
+<div class="full"><label>Features (one per line)</label><textarea name="features" rows="4">{{ a.features or '' }}</textarea></div>
+<div class="full"><label>Install guide (blank = default steps)</label><textarea name="install_guide" rows="3">{{ a.install_guide or '' }}</textarea></div>
+<div><label>Icon (max {{ MAX_IMG_MB }} MB)</label><input type="file" name="icon" accept="image/*">{% if a.icon %}<br><img src="{{ img(a.icon) }}" width="48">{% endif %}</div>
+<div><label>Screenshots (multiple)</label><input type="file" name="shots" accept="image/*" multiple></div>
+<div><label>Status</label><select name="status"><option value="draft">Draft</option><option value="published" {{ 'selected' if a.status=='published' }}>Published</option></select></div>
+<div><label><input type="checkbox" name="is_featured" {{ 'checked' if a.is_featured }}> Featured</label><label><input type="checkbox" name="is_trending" {{ 'checked' if a.is_trending }}> Trending</label><label><input type="checkbox" name="is_editor_choice" {{ 'checked' if a.is_editor_choice }}> Editor's choice</label></div>
+<div class="full"><strong>SEO</strong></div>
+<div><label>Meta title</label><input name="meta_title" value="{{ a.meta_title or '' }}"></div><div><label>Canonical URL</label><input name="canonical_url" value="{{ a.canonical_url or '' }}"></div>
+<div class="full"><label>Meta description</label><input name="meta_description" maxlength="300" value="{{ a.meta_description or '' }}"></div>
+<div><label>Meta keywords</label><input name="meta_keywords" value="{{ a.meta_keywords or '' }}"></div><div><label>Open Graph image</label><input type="file" name="og_image" accept="image/*"></div>
+<div><label><input type="checkbox" name="noindex" {{ 'checked' if a.noindex }}> noindex this page</label></div></div>
+<div><button class="btn">Save</button> <a href="{{ url_for('admin.items',type_=type_) }}">Back</a>{% if a.id %} · <a href="{{ url_for('admin.versions',aid=a.id) }}"><b>Manage versions / APK files</b></a>{% endif %}</div></form>
+{% if shots %}<h2>Screenshots</h2><div class="shots">{% for s in shots %}<div><img src="{{ img(s.file) }}" style="height:160px"><br>{{ del(url_for('admin.shot_delete',sid=s.id),'Delete','Remove screenshot?') }}</div>{% endfor %}</div>{% endif %}{% endblock %}
